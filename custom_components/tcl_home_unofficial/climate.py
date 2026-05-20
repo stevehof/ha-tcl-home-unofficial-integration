@@ -63,8 +63,8 @@ def get_current_fan_speed_fn(device: Device) -> str:
         return getPortableWind4ValueSeed(device.data.wind_speed)
     return getWindSpeed(
         wind_speed=device.data.wind_speed,
-        turbo=device.data.turbo,
-        silence_switch=device.data.silence_switch,
+        turbo=getattr(device.data, "turbo", False),
+        silence_switch=getattr(device.data, "silence_switch", False),
     )
 
 
@@ -150,7 +150,7 @@ async def async_setup_entry(
                         e.value for e in LeftAndRightAirSupplyVectorEnum
                     ],
                     current_target_temp_fn=lambda device: device.data.target_temperature,
-                    current_temp_fn=lambda device: device.data.current_temperature,
+                    current_temp_fn=lambda device: getattr(device.data, "current_temperature", None),
                 )
             )
 
