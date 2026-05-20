@@ -79,7 +79,17 @@ async def async_setup_entry(
                 enabled=True,
             )
         )
-        
+        if DeviceFeatureEnum.EXTERNAL_CURRENT_TEMPERATURE in device.supported_features:
+            textInputs.append(
+            TextConfigEntity(
+                hass=hass,
+                coordinator=coordinator,
+                name="Current Temperature Entity ID",
+                device=device,
+                config_path="user_config.external.externalCurrentTemperatureEntity",
+                config_entry_id=config_entry.entry_id
+            )
+        )        
         
         textInputs.append(
             NotImplementedDeviceTextEntity(

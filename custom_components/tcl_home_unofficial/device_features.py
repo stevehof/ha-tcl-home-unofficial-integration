@@ -2,6 +2,8 @@
 
 from enum import StrEnum
 
+from custom_components.tcl_home_unofficial.data_storage import safe_get_value
+
 from .device_capabilities import DeviceCapabilityEnum
 from .device_types import DeviceTypeEnum
 
@@ -92,14 +94,16 @@ class DeviceFeatureEnum(StrEnum):
     USER_CONFIG_SETTINGS_NATIVE_TEMP_STEP = "user_config.settings.native_temp_step"
     USER_CONFIG_SETTINGS_MIN_TEMP = "user_config.settings.min_temp"
     USER_CONFIG_SETTINGS_MAX_TEMP = "user_config.settings.max_temp"
-
+    EXTERNAL_CURRENT_TEMPERATURE = "external.current_temperature"
 
 def has_property(aws_thing_state_reported: dict[str, any], propertyName: str) -> bool:
     return propertyName in aws_thing_state_reported
 
 
 def getSupportedFeatures(
-    device_type: DeviceTypeEnum,aws_thing_state_reported: dict[str, any],device_storage: dict[str, any] | None = None,
+    device_type: DeviceTypeEnum,
+    aws_thing_state_reported: dict[str, any],
+    device_storage: dict[str, any] | None = None,
 ) -> list[DeviceFeatureEnum]:
     try:
         capabilities = aws_thing_state_reported.get("capabilities", [])
@@ -467,6 +471,10 @@ def getSupportedFeatures(
                 if has_property(aws_thing_state_reported, "currentTemperature"):
                     features.append(DeviceFeatureEnum.SENSOR_CURRENT_TEMPERATURE)
                     features.append(DeviceFeatureEnum.CLIMATE)
+                else:
+                    features.append(DeviceFeatureEnum.EXTERNAL_CURRENT_TEMPERATURE)
+                    if safe_get_value(device_storage, "user_config.external.externalCurrentTemperatureEntity", ""):
+                        features.append(DeviceFeatureEnum.CLIMATE)
 
                 return features
             # Breeva A3 and A5 pretty much have the same features
