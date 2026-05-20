@@ -14,7 +14,7 @@ from .device import Device
 from .tcl_entity_base import TclNonPollingEntityBase,TclEntityBase
 from .coordinator import IotDeviceCoordinator
 from .self_diagnostics import SelfDiagnostics
-
+from .data_storage import (safe_get_value, safe_set_value, set_stored_data)
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -23,7 +23,7 @@ async def async_setup_entry(
     config_entry: New_NameConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ):
-    """Set up the Binary Sensors."""
+    """Set up the Text Sensors."""
 
     coordinator = config_entry.runtime_data.coordinator
     textInputs = []
@@ -248,3 +248,38 @@ class TextOutEntity(TclEntityBase, TextEntity):
     async def async_set_value(self, value: str) -> None:
         self._attr_native_value = self.value_function(self.device)
                 
+class TextConfigEntity(TclEntityBase, TextEntity):
+    _attr_has_entity_name = True
+    _attr_name = None
+    _attr_should_poll = True
+    _attr_force_update = True
+               
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        coordinator: IotDeviceCoordinator,
+        device: Device,
+        name: str,
+        config_path: str,
+        config_entry_id: str,
+    ) -> None:
+        TclEntityBase.__init__(self, coordinator, config_path, name, device)
+        self.hass = hass
+        self.config_path = config_path
+        self._config_entry_id = config_entry_id
+        self._attr_entity_category = EntityCategory.CONFIG
+        self._attr_native_value = safe_get_value(device.storage, config_path, "")
+        
+    @property
+    def icon(self):
+        return "mdi:cog"
+    
+    async def async_set_value(self, value: str) -> None:
+        storage_data, need_save = safe_set_value(
+            self.device.storage, self.config_path, value, overwrite_if_exists=True
+        )
+
+        if need_save:
+            await set_stored_data(self.hass, self.device.device_id, storage_data)
+            await self.hass.config_entries.async_reload(self._config_entry_id)
+        await self.coordinator.async_refresh()
