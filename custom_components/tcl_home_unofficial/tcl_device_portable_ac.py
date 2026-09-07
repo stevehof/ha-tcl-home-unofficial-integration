@@ -59,7 +59,11 @@ async def get_stored_portable_ac_data(
     stored_data, need_save = safe_set_value(stored_data, "user_config.settings.max_temp", 32)
 
     stored_data, need_save = safe_set_value(stored_data, "target_temperature.Cool.value", 22)
-
+    stored_data, need_save = safe_set_value(stored_data, "target_temperature.Dehumidification.value", 22)
+    stored_data, need_save = safe_set_value(stored_data, "target_temperature.Heat.value", 22)
+    stored_data, need_save = safe_set_value(stored_data, "target_temperature.Fan.value", 22)
+    stored_data, need_save = safe_set_value(stored_data, "target_temperature.Auto.value", 22)
+    
     default_wind_speed = "Auto"
     stored_data, need_save = safe_set_value(stored_data, "fan_speed.Cool.value", default_wind_speed)
     stored_data, need_save = safe_set_value(stored_data, "fan_speed.Dehumidification.value", default_wind_speed)
