@@ -119,7 +119,7 @@ async def async_setup_entry(
                     name="Climate",
                     power_switch_feature=DeviceFeatureEnum.SWITCH_POWER,
                     mode_select_feature=DeviceFeatureEnum.SELECT_MODE,
-                    temperature_set_feature=DeviceFeatureEnum.NUMBER_TARGET_TEMPERATURE,
+                    temperature_set_feature= DeviceFeatureEnum.NUMBER_TARGET_DEGREE if DeviceFeatureEnum.NUMBER_TARGET_DEGREE in device.supported_features else DeviceFeatureEnum.NUMBER_TARGET_TEMPERATURE,
                     vertical_air_direction_select_feature=get_vertical_air_direction_feature(
                         device
                     ),
