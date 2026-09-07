@@ -52,7 +52,7 @@ class DesiredStateHandlerForNumber:
             self.device.data.work_mode, ModeEnum.AUTO
         )
         # _LOGGER.info("Storing target temperature %s for mode %s in device storage %s",value,mode,self.device.device_id)
-        stored_data["target_temperature"][mode]["value"] = value
+        stored_data["target_temperature"].setdefault(mode, {})["value"] = value
         self.device.storage = stored_data
         await set_stored_data(self.hass, self.device.device_id, stored_data)
 
@@ -63,7 +63,7 @@ class DesiredStateHandlerForNumber:
             self.device.data.work_mode, DehumidifierModeEnum.DRY
         )
         # _LOGGER.info("Storing target temperature %s for mode %s in device storage %s",value,mode,self.device.device_id)
-        stored_data["humidity"][mode]["value"] = value
+        stored_data["humidity"].setdefault(mode, {})["value"] = value
         self.device.storage = stored_data
         await set_stored_data(self.hass, self.device.device_id, stored_data)
 

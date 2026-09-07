@@ -332,7 +332,9 @@ class ClimateHandler(TclEntityBase, ClimateEntity):
         elif DeviceFeatureEnum.EXTERNAL_CURRENT_TEMPERATURE in self.device.supported_features:
             external_temp_id = self.device.storage.get("user_config", {}).get("external", {}).get("externalCurrentTemperatureEntity", "")
             if external_temp_id:
-              return float(self.hass.states.get(external_temp_id).state)
+              ex_temp_state = self.hass.states.get(external_temp_id)
+              if ex_temp_state and ex_temp_state.state:
+                return float(ex_temp_state.state)
         return None
         
     @property
