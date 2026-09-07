@@ -434,6 +434,7 @@ def getSupportedFeatures(
                     DeviceFeatureEnum.MODE_AC_DEHUMIDIFICATION,
                     DeviceFeatureEnum.MODE_AC_FAN,
                     DeviceFeatureEnum.MODE_AC_COOL,
+                    DeviceFeatureEnum.MODE_AC_HEAT,
                     DeviceFeatureEnum.SWITCH_POWER,
                     DeviceFeatureEnum.SWITCH_SLEEP,
                     DeviceFeatureEnum.SELECT_MODE,
@@ -463,6 +464,15 @@ def getSupportedFeatures(
                         features.append(DeviceFeatureEnum.SELECT_PORTABLE_WIND_SPEED)
                 else:
                     features.append(DeviceFeatureEnum.SELECT_PORTABLE_WIND_SPEED)
+                    
+                if has_property(aws_thing_state_reported, "turbo"):
+                    features.append(DeviceFeatureEnum.INTERNAL_HAS_TURBO_PROPERTY)
+
+                if has_property(aws_thing_state_reported, "silenceSwitch"):
+                    features.append(DeviceFeatureEnum.INTERNAL_HAS_SILENCESWITCH_PROPERTY)
+
+                if has_property(aws_thing_state_reported, "highTemperatureWind"):
+                    features.append(DeviceFeatureEnum.INTERNAL_HAS_HIGHTEMPERATUREWIND_PROPERTY)
 
                 if has_property(aws_thing_state_reported, "swingWind"):
                     features.append(DeviceFeatureEnum.SWITCH_SWING_WIND)
